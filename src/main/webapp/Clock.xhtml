@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Часы</title>
+    <style type="text/css">
+        .header{
+            font-family: monospace;
+            font-size: 15px;
+            display: block;
+            background-color: aliceblue;
+            text-align: center;
+            color: #f302ff;
+        }
+        .clock{
+            background-color: #88df77;
+            margin: auto;
+            font-family: C059,serif;
+            text-align: center;
+            color: white;
+            font-size: 100px;
+        }
+        .refButton{
+            margin: auto;
+        }
+    </style>
+</h:head>
+<h:body>
+    <div class="header">
+        <p>
+            ФИО: Сабуров Владислав Алексеевич<br/>
+        ГРУППА: P3210<br/>
+        ЛАБОРАТОРНАЯ РАБОТА №3<br/>
+        ВАРИАНТ: 10661
+        </p>
+    </div>
+    <div class="clock">
+        <h:form>
+            <h:outputText value="#{clock.date}" id="date"/>
+            <p:poll update="date" interval="13"/>
+        </h:form>
+    </div>
+    <div class="refButton">
+        <h:form>
+            <h:commandButton action="sayHello" value="К графику!"/>
+        </h:form>
+    </div>
+</h:body>
+</html>

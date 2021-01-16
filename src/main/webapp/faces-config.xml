@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+    http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+  <navigation-rule>
+      <from-view-id>/Clock.xhtml</from-view-id>
+      <navigation-case>
+          <from-outcome>sayHello</from-outcome>
+          <to-view-id>/Graph.xhtml</to-view-id>
+      </navigation-case>
+  </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/Graph.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>sayGoodbye</from-outcome>
+            <to-view-id>/Clock.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <managed-bean>
+        <managed-bean-name>data</managed-bean-name>
+        <managed-bean-class>com.edu.Web3.DataBean</managed-bean-class>
+        <managed-bean-scope>none</managed-bean-scope>
+        <managed-property>
+            <property-name>username</property-name>
+            <value></value>
+        </managed-property>
+        <managed-property>
+            <property-name>password</property-name>
+            <value></value>
+        </managed-property>
+    </managed-bean>
+</faces-config>

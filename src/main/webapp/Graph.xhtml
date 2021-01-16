@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <script src="Redraw.js" type="text/javascript"></script>
+    <title>Граф</title>
+    <style type="text/css">
+        .error {
+            color: red;
+        }
+
+        .dot {
+            background-color: rgb(132, 221, 201);
+        }
+
+        .dot, .x, .y, .r, .submit {
+            text-align: center;
+            margin: 20px 30px;
+            padding: 10px;
+        }
+
+        .x {
+            background-color: #df77a8;
+        }
+
+        .y {
+            background-color: #88df77;
+        }
+
+        .r {
+            background-color: #df9b77;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            margin: auto;
+            text-align: center;
+            table-layout: fixed;
+        }
+
+        td, th {
+            width: 170px;
+            text-wrap: normal;
+            word-wrap: break-word;
+        }
+
+        .hiddenTable {
+            display: none;
+        }
+    </style>
+</h:head>
+<h:body onload="redraw();catchClick();">
+    <div class="dot">
+        <object type="image/svg+xml">
+            <svg id="svgpic" width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+                <g>
+                    <title>background</title>
+                    <rect x="-1" y="-1" width="402" height="402" id="canvas_background" fill="#fff"/>
+                    <g id="canvasGrid" display="none">
+                        <rect id="svg_3" width="100%" height="100%" x="0" y="0" stroke-width="0"
+                              fill="url(#gridpattern)"/>
+                    </g>
+                </g>
+                <g>
+                    <title>Layer 1</title>
+                    <path d="M 200 70 A 130 140, 0, 0, 1, 330, 200 L 200 200" fill="#2babe2"/>
+                    <path d="M 200 200 L 200 135 L 70 200 L 200 200" fill="#2babe2"/>
+                    <rect id="svg_4" height="65" width="130" y="200" x="70" stroke-width="0" stroke="#000"
+                          fill="#2babe2"/>
+                    <line fill="none" stroke="#000" stroke-width="1.5" x1="200" y1="10" x2="200" y2="390" id="svg_1"
+                          stroke-linejoin="undefined" stroke-linecap="undefined"/>
+                    <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="10"
+                          y1="200" x2="390" y2="200" id="svg_2" stroke-linejoin="undefined" stroke-linecap="undefined"/>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="330" y="195" id="svg_7" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">R</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="265" y="195" id="svg_8" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">R/2</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="385" y="195" id="svg_9" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">x</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="70"
+                          y="195" id="svg_11" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">-R</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="135" y="195" id="svg_12" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">-R/2</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="205" y="15" id="svg_15" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">y</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="205" y="135" id="svg_16" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">R/2</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="205" y="70" id="svg_17" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">R</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="205" y="265" id="svg_18" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">-R/2</text>
+                    <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null"
+                          x="205" y="330" id="svg_19" font-size="12" font-family="sans-serif" text-anchor="start"
+                          xml:space="preserve">-R</text>
+                </g>
+                <g id="dots">
+                    <title>Layer 2</title>
+                </g>
+            </svg>
+        </object>
+        <h:form id="hiddenForm" styleClass="hiddenForm">
+            <h:inputHidden id="hiddenX" value="#{coordinates.x}" converter="javax.faces.BigDecimal"/>
+            <h:inputHidden id="hiddenY" value="#{coordinates.y}" converter="javax.faces.BigDecimal"/>
+            <h:inputHidden id="hiddenR" value="#{coordinates.r}" converter="javax.faces.BigDecimal"/>
+            <h:commandButton id="hiddenSubmit" type="submit" action="#{coordinates.makeEntry}"/>
+        </h:form>
+        <h:form id="dotForm">
+            <div class="x">
+                <h:outputText value="Выберите координату x"/><br/>
+                <h:outputLabel for="x" value="x: "/>
+                <p:spinner id="x" value="#{coordinates.x}" stepFactor="0.5" min="-4" max="4" required="true" label="x"/>
+            </div>
+            <div class="y">
+                <h:outputText value="Введите координату y в пределах от -5 до 5"/><br/>
+                <h:outputLabel for="y" value="y: "/>
+                <h:inputText id="y" maxlength="16" value="#{coordinates.y}" converter="javax.faces.BigDecimal"
+                             required="true" label="y" requiredMessage="Введите значение поля"
+                             converterMessage="Значение должно быть числом"
+                             validatorMessage="Значение должно быть в пределах от -5 до 5">
+                    <f:validateDoubleRange maximum="5" minimum="-5"/>
+                    <f:ajax render="yErr"/>
+                </h:inputText>
+                <br/>
+                <h:message for="y" class="error" id="yErr"/>
+            </div>
+            <div class="r">
+                <h:outputText value="Введите значение радиуса R в пределах от 1 до 4"/><br/>
+                <h:outputLabel for="r" value="R: "/>
+                <h:inputText id="r" maxlength="16" value="#{coordinates.r}" converter="javax.faces.BigDecimal"
+                             required="true" label="R" requiredMessage="Введите значение поля"
+                             converterMessage="Значение должно быть числом"
+                             validatorMessage="Значение должно быть в пределах от 1 до 4">
+                    <f:validateDoubleRange minimum="1" maximum="4"/>
+                    <f:ajax onevent="redraw" render="rErr hiddenTable" listener="#{table.draw(coordinates.r)}"/>
+                </h:inputText>
+                <br/>
+                <h:message for="r" class="error" id="rErr"/>
+            </div>
+            <div class="submit">
+                <h:commandButton value="Отправить!" type="submit" action="#{coordinates.makeEntry}"/>
+            </div>
+        </h:form>
+    </div>
+    <h:form>
+        <h:commandButton value="К часам!" action="sayGoodbye"/>
+    </h:form>
+    <h:dataTable value="#{table.entities}" var="entity" id="table">
+        <h:column>
+            <f:facet name="header">X</f:facet>
+            #{entity.point.x}
+        </h:column>
+        <h:column>
+            <f:facet name="header">Y</f:facet>
+            #{entity.point.y}
+        </h:column>
+        <h:column>
+            <f:facet name="header">R</f:facet>
+            #{entity.point.r}
+        </h:column>
+        <h:column>
+            <f:facet name="header">Result</f:facet>
+            #{entity.hit}
+        </h:column>
+    </h:dataTable>
+    <h:dataTable value="#{table.drawEntities}" var="entity" id="hiddenTable" styleClass="hiddenTable">
+        <h:column>
+            <f:facet name="header">X</f:facet>
+            #{entity.point.x}
+        </h:column>
+        <h:column>
+            <f:facet name="header">Y</f:facet>
+            #{entity.point.y}
+        </h:column>
+        <h:column>
+            <f:facet name="header">R</f:facet>
+            #{entity.point.r}
+        </h:column>
+        <h:column>
+            <f:facet name="header">Result</f:facet>
+            #{entity.hit}
+        </h:column>
+    </h:dataTable>
+</h:body>
+</html>
