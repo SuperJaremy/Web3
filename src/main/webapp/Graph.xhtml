@@ -49,7 +49,7 @@
             word-wrap: break-word;
         }
 
-        .hiddenTable {
+        .hiddenTable, .hiddenForm {
             display: none;
         }
     </style>
@@ -117,7 +117,9 @@
             <h:inputHidden id="hiddenX" value="#{coordinates.x}" converter="javax.faces.BigDecimal"/>
             <h:inputHidden id="hiddenY" value="#{coordinates.y}" converter="javax.faces.BigDecimal"/>
             <h:inputHidden id="hiddenR" value="#{coordinates.r}" converter="javax.faces.BigDecimal"/>
-            <h:commandButton id="hiddenSubmit" type="submit" action="#{coordinates.makeEntry}"/>
+            <h:commandButton id="hiddenSubmit" type="submit" action="#{coordinates.makeEntry}">
+                <f:ajax execute="@form" onevent="redraw" render="table hiddenTable"/>
+            </h:commandButton>
         </h:form>
         <h:form id="dotForm">
             <div class="x">
@@ -152,7 +154,9 @@
                 <h:message for="r" class="error" id="rErr"/>
             </div>
             <div class="submit">
-                <h:commandButton value="Отправить!" type="submit" action="#{coordinates.makeEntry}"/>
+                <h:commandButton value="Отправить!" type="submit" action="#{coordinates.makeEntry}">
+                    <f:ajax execute="@form" render="table hiddenTable" onevent="redraw"/>
+                </h:commandButton>
             </div>
         </h:form>
     </div>

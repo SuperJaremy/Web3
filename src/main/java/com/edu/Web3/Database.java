@@ -69,7 +69,6 @@ public class Database {
             try {
                 PreparedStatement getStatement = prepareGetStatement(connection);
                 List<TableBean.Entity> list = bean.getEntities();
-                getStatement.setString(1, id);
                 ResultSet resultSet = getStatement.executeQuery();
                 while (resultSet.next()) {
                     list.add(bean.new Entity(new Point(resultSet.getBigDecimal("X"), resultSet.getBigDecimal("Y"), resultSet.getBigDecimal("R")), resultSet.getInt("RESULT") == 1));
@@ -118,7 +117,7 @@ public class Database {
     }
 
     private PreparedStatement prepareGetStatement(Connection connection) throws SQLException{
-        return connection.prepareStatement("SELECT * FROM \"Points\" WHERE ID = ?");
+        return connection.prepareStatement("SELECT * FROM \"Points\"");
     }
 
 }

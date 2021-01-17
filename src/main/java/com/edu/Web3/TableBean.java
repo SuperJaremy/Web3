@@ -32,12 +32,13 @@ public class TableBean implements Serializable {
     @PostConstruct
     public void init(){
         database.getEntities(sessionId,this);
+        for(Entity i : entities){
+            Point originalPoint = i.getPoint();
+            Point drawPoint = new Point(originalPoint.getX(),originalPoint.getY(),originalPoint.getR());
+            drawEntities.add(new Entity(drawPoint,i.isHit()));
+        }
     }
 
-    @PreDestroy
-    public void destroy(){
-        database.removeEntities(sessionId);
-    }
 
     public List<Entity> getEntities(){
         return entities;
