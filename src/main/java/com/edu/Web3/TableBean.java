@@ -12,6 +12,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class TableBean implements Serializable {
     private @Getter final List<Entity> drawEntities = new ArrayList<>();
     @ManagedProperty(value = "#{database}")
     private @Setter Database database;
-    private final String sessionId = FacesContext.getCurrentInstance().getExternalContext().getSessionId(false);
+    private String sessionId;
     private @Getter final Check check = new Checker();
 
 
@@ -36,6 +37,10 @@ public class TableBean implements Serializable {
             Point originalPoint = i.getPoint();
             Point drawPoint = new Point(originalPoint.getX(),originalPoint.getY(),originalPoint.getR());
             drawEntities.add(new Entity(drawPoint,i.isHit()));
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            if(session!=null)
+                sessionId = session.getId();
+            else sessionId = null;
         }
     }
 

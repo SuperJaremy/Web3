@@ -1,0 +1,11 @@
+<ivy-module version="2.0">
+    <info organisation="com.edu" module="web3"/>
+    <dependencies>
+        <dependency org="org.projectlombok" name="lombok" rev="1.18.16"/>
+        <dependency org="org.primefaces" name="primefaces" rev="7.0"/>
+        <dependency org="javax" name="javaee-web-api" rev="8.0.1"/>
+        <dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.7.0"/>
+        <dependency org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.7.0"/>
+        <dependency org="com.oracle.database.jdbc" name="ojdbc8-production" rev="19.9.0.0"/>
+    </dependencies>
+</ivy-module>
