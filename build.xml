@@ -19,7 +19,7 @@
         </javac>
     </target>
     <target name="build" depends="compile">
-
+<!--        <jar basedir="${build}/classes"-->
     </target>
     <target name="clean">
 
