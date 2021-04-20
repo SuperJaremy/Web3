@@ -1,6 +1,6 @@
 package com.edu.Web3;
 
-import lombok.Setter;
+import lombok.Data;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,16 +14,16 @@ import java.util.concurrent.BlockingQueue;
 
 @ManagedBean(eager = true)
 @ApplicationScoped
+@Data
 public class Database {
     BlockingQueue<Connection> connections;
     private final int CONNECTIONS_NUMBER = 4;
+
     @ManagedProperty(value = "#{data.username}")
-    private @Setter
-    String username;
+    private String username;
 
     @ManagedProperty(value = "#{data.password}")
-    private @Setter
-    String password;
+    private String password;
 
     @PostConstruct
     public void init() throws SQLException {
