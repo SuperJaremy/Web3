@@ -25,9 +25,9 @@
             <lib dir="${lib}"/>
             <fileset dir="${main}/webapp/"/>
             <manifest>
-                <attribute name="Created-By" value="Web" />
-                <attribute name="Manifest-Version" value="1.0" />
-                <attribute name="Main-Class" value="NoClass" />
+                <attribute name="Created-By" value="Web"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Main-Class" value="NoClass"/>
             </manifest>
         </war>
     </target>
@@ -37,12 +37,21 @@
         <delete dir="${lib}"/>
     </target>
 
-    <target name="test" depends="build" description="running junit tests">
-
+    <target name="test" depends="build">
+        <junit haltonfailure="yes" printsummary="yes">
+            <classpath>
+                <pathelement path="${build}"/>
+                <path refid="build.classpath"/>
+                <pathelement location="${test}"/>
+            </classpath>
+            <test name="CheckerTest"/>
+        </junit>
     </target>
+
     <target name="doc">
 
     </target>
+
     <target name="team" depends="build">
 
     </target>
