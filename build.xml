@@ -1,15 +1,15 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Web3" default="build">
     <property file="build.properties"/>
 
-    <path id="build.classpath">
+    <path id="lib.classpath">
         <fileset dir="${lib}">
             <include name="**/*.jar"/>
         </fileset>
     </path>
 
     <path id="test.classpath">
-        <path refid="build.classpath"/>
-        <pathelement location="${build}"/>
+        <path refid="lib.classpath"/>
+        <pathelement location="${classes}"/>
     </path>
 
     <target name="resolve">
@@ -17,11 +17,11 @@
     </target>
 
     <target name="compile" depends="resolve" description="compile java files">
-        <mkdir dir="${build}"/>
+        <mkdir dir="${classes}"/>
         <mkdir dir="${target}/test"/>
-        <javac includeantruntime="false" destdir="${build}" source="8">
+        <javac includeantruntime="false" destdir="${classes}" source="8">
             <src path="${java_code}"/>
-            <classpath refid="build.classpath"/>
+            <classpath refid="lib.classpath"/>
         </javac>
         <javac includeantruntime="false" destdir="${target}/test" source="8">
             <src path="${src}/test/java"/>
@@ -30,8 +30,8 @@
     </target>
 
     <target name="build" depends="compile" description="create jar file">
-        <war destfile="${target}/${name}.war" webxml="${web_xml}">
-            <classes dir="${build}"/>
+        <war destfile="${target}/Web3.war" webxml="${web_xml}">
+            <classes dir="${classes}"/>
             <lib dir="${lib}"/>
             <fileset dir="${main}/webapp/"/>
             <manifest>
@@ -54,8 +54,8 @@
     <target name="test" depends="build">
         <junit haltonfailure="yes" printsummary="yes">
             <classpath>
-                <pathelement path="${build}"/>
-                <path refid="build.classpath"/>
+                <pathelement path="${classes}"/>
+                <path refid="lib.classpath"/>
                 <pathelement location="${target}/test"/>
             </classpath>
             <test name="CheckerTest" haltonfailure="no" outfile="${target}/test-result">
@@ -72,6 +72,23 @@
             <attribute name="sha-1-checksum" value="${sha-1}"/>
             <attribute name="md5-checksum" value="${sha-1}"/>
         </manifest>
+
+        <javadoc destdir="${doc}">
+            <fileset dir="${java_code}"/>
+            <classpath refid="lib.classpath"/>
+        </javadoc>
+
+        <war destfile="${target}/Web3_with_javadoc.war" webxml="${web_xml}">
+            <classes dir="${classes}"/>
+            <lib dir="${lib}"/>
+            <fileset dir="${main}/webapp/"/>
+            <fileset dir="${doc}"/>
+            <manifest>
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Main-Class" value="null"/>
+            </manifest>
+        </war>
+
     </target>
 
     <target name="team" depends="build">
