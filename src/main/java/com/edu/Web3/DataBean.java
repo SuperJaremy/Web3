@@ -1,13 +1,11 @@
 package com.edu.Web3;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.io.Serializable;
 
+@Data
 public class DataBean implements Serializable {
-    private @Setter @Getter
-    String username;
-    private @Setter @Getter
-    String password;
+    private String username;
+    private String password;
 }

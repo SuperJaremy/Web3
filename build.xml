@@ -1,7 +1,8 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Web3" default="build">
     <property file="build.properties"/>
+
     <path id="build.classpath">
-        <fileset dir="${classpath}">
+        <fileset dir="${lib}">
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -10,7 +11,7 @@
         <ivy:retrieve/>
     </target>
 
-    <target name="compile" depends="resolve" description="Compile java files">
+    <target name="compile" depends="resolve" description="compile java files">
         <mkdir dir="${build}"/>
         <javac includeantruntime="false" destdir="${build}" source="8">
             <src path="${java_code}"/>
@@ -18,15 +19,25 @@
         </javac>
     </target>
 
-    <target name="build" depends="compile">
-<!--        <jar basedir="${build}/classes"-->
+    <target name="build" depends="compile" description="create jar file">
+        <war destfile="${target}/${name}.war" webxml="${web_xml}">
+            <classes dir="${build}"/>
+            <lib dir="${lib}"/>
+            <fileset dir="${main}/webapp/"/>
+            <manifest>
+                <attribute name="Created-By" value="Web" />
+                <attribute name="Manifest-Version" value="1.0" />
+                <attribute name="Main-Class" value="NoClass" />
+            </manifest>
+        </war>
     </target>
 
-    <target name="clean" description="Delete compiled project classes and all temporary files">
-        <delete dir="${build}"/>
+    <target name="clean" description="delete compiled project classes and all temporary files">
+        <delete dir="${target}"/>
+        <delete dir="${lib}"/>
     </target>
 
-    <target name="test" depends="build">
+    <target name="test" depends="build" description="running junit tests">
 
     </target>
     <target name="doc">

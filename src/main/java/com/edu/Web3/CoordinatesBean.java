@@ -1,5 +1,6 @@
 package com.edu.Web3;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,14 +12,20 @@ import java.math.BigDecimal;
 
 @ManagedBean(name = "coordinates")
 @RequestScoped
+@Data
 public class CoordinatesBean implements Serializable {
-    private final static long serialVersionUID=432423341123L;
-    private @Getter @Setter BigDecimal x;
-    private @Getter @Setter BigDecimal y;
-    private @Getter @Setter BigDecimal r;
+    private final static long serialVersionUID = 432423341123L;
+
+    private BigDecimal x;
+
+    private BigDecimal y;
+
+    private BigDecimal r;
+
     @ManagedProperty(value = "#{table}")
-    @Getter @Setter TableBean table;
-    public void makeEntry(){
-        table.addPoint(x,y,r);
+    TableBean table;
+
+    public void makeEntry() {
+        table.addPoint(x, y, r);
     }
 }
