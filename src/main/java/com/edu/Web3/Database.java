@@ -8,6 +8,7 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -63,26 +64,26 @@ public class Database {
         }
     }
 
-    public boolean getEntities(String id, TableBean bean) {
+    public List<TableBean.Entity> getEntities(String id) {
         try {
             Connection connection = connections.take();
             try {
                 PreparedStatement getStatement = prepareGetStatement(connection);
-                List<TableBean.Entity> list = bean.getEntities();
+                List<TableBean.Entity> list = new ArrayList<>();
                 ResultSet resultSet = getStatement.executeQuery();
                 while (resultSet.next()) {
                     list.add(new TableBean.Entity(new Point(resultSet.getBigDecimal("X"), resultSet.getBigDecimal("Y"), resultSet.getBigDecimal("R")), resultSet.getInt("RESULT") == 1));
                 }
-                return true;
+                return list;
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
-                return false;
+                return null;
             } finally {
                 connections.put(connection);
             }
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -117,5 +118,4 @@ public class Database {
     private PreparedStatement prepareGetStatement(Connection connection) throws SQLException {
         return connection.prepareStatement("SELECT * FROM \"Points\"");
     }
-
 }

@@ -21,7 +21,7 @@ import java.util.List;
 @SessionScoped
 public class TableBean implements Serializable {
     private static final long serialVersionUID = 8349L;
-    private final List<Entity> entities = new ArrayList<>();
+    private List<Entity> entities = new ArrayList<>();
     private @Getter
     final List<Entity> drawEntities = new ArrayList<>();
     @ManagedProperty(value = "#{database}")
@@ -34,7 +34,7 @@ public class TableBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        database.getEntities(sessionId, this);
+        entities = database.getEntities(sessionId);
         for (Entity i : entities) {
             Point originalPoint = i.getPoint();
             Point drawPoint = new Point(originalPoint.getX(), originalPoint.getY(), originalPoint.getR());
