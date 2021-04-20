@@ -7,15 +7,25 @@
         </fileset>
     </path>
 
+    <path id="test.classpath">
+        <path refid="build.classpath" />
+        <pathelement location="${build}" />
+    </path>
+
     <target name="resolve">
         <ivy:retrieve/>
     </target>
 
     <target name="compile" depends="resolve" description="compile java files">
         <mkdir dir="${build}"/>
+        <mkdir dir="${target}/test"/>
         <javac includeantruntime="false" destdir="${build}" source="8">
             <src path="${java_code}"/>
             <classpath refid="build.classpath"/>
+        </javac>
+        <javac includeantruntime="false" destdir="${target}/test" source="8">
+            <src path="${src}/test/java"/>
+            <classpath refid="test.classpath"/>
         </javac>
     </target>
 
@@ -42,9 +52,11 @@
             <classpath>
                 <pathelement path="${build}"/>
                 <path refid="build.classpath"/>
-                <pathelement location="${test}"/>
+                <pathelement location="${target}/test"/>
             </classpath>
-            <test name="CheckerTest"/>
+            <test name="CheckerTest" haltonfailure="no" outfile="${target}/test-result">
+                <formatter type="xml"/>
+            </test>
         </junit>
     </target>
 
