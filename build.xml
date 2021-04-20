@@ -9,21 +9,27 @@
             <include name="**/*.jar"/>
         </fileset>
     </path>
+
     <target name="resolve">
         <ivy:retrieve/>
     </target>
-    <target name="compile" depends="resolve">
+
+    <target name="compile" depends="resolve" description="Compile java files">
+        <mkdir dir="${build}/classes"/>
         <javac includeantruntime="false" destdir="${build}/classes" source="8">
             <src path="${java_code}"/>
             <classpath refid="build.classpath"/>
         </javac>
     </target>
+
     <target name="build" depends="compile">
 <!--        <jar basedir="${build}/classes"-->
     </target>
-    <target name="clean">
 
+    <target name="clean" description="Delete compiled project classes and all temporary files">
+        <delete dir="${build}"/>
     </target>
+
     <target name="test" depends="build">
 
     </target>
