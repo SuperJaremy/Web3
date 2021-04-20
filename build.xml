@@ -1,11 +1,7 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Web3" default="build">
-    <property name="src" location="src"/>
-    <property name="java_code"
-              location="${src}/main/java/com/edu/Web3"/>
-    <property name="build" location="target"/>
-    <property name="classpath" location="lib"/>
+    <property file="build.properties"/>
     <path id="build.classpath">
-        <fileset dir="lib">
+        <fileset dir="${classpath}">
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -15,8 +11,8 @@
     </target>
 
     <target name="compile" depends="resolve" description="Compile java files">
-        <mkdir dir="${build}/classes"/>
-        <javac includeantruntime="false" destdir="${build}/classes" source="8">
+        <mkdir dir="${build}"/>
+        <javac includeantruntime="false" destdir="${build}" source="8">
             <src path="${java_code}"/>
             <classpath refid="build.classpath"/>
         </javac>
@@ -40,4 +36,3 @@
 
     </target>
 </project>
-<!--23918-->
