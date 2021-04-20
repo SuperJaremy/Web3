@@ -51,7 +51,7 @@ public class CheckerTest {
     }
 
     @Test
-    @DisplayName("Проверка попадания во вторую область")
+    @DisplayName("Проверка попадания в третью область")
     public void testAreaThree() {
         Point point1 = new Point(BigDecimal.ZERO, BigDecimal.valueOf(-2), BigDecimal.valueOf(4));
         Point point2 = new Point(BigDecimal.valueOf(-4), BigDecimal.ZERO, BigDecimal.valueOf(4));
@@ -63,7 +63,7 @@ public class CheckerTest {
         Assertions.assertFalse(check.checkPoint(point4), "Прошла точка за границей области");
     }
 
-    @DisplayName("Проверка попадания во вторую область")
+    @DisplayName("Проверка попадания в четвёртую область")
     @RepeatedTest(5)
     public void testAreaFour() {
         Random random = new Random();
