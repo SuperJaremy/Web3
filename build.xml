@@ -3,14 +3,16 @@
 
     <path id="build.classpath">
         <fileset dir="${lib}">
-            <include name="**/*.jar"/>
+            <include name="*.jar"/>
         </fileset>
     </path>
 
     <path id="test.classpath">
         <path refid="build.classpath" />
-        <pathelement location="${build}" />
+        <pathelement location="${build}"/>
+        <pathelement location="${target}/test"/>
     </path>
+
 
     <target name="resolve">
         <ivy:retrieve/>
@@ -49,14 +51,13 @@
 
     <target name="test" depends="build">
         <junit haltonfailure="yes" printsummary="yes">
-            <classpath>
-                <pathelement path="${build}"/>
-                <path refid="build.classpath"/>
-                <pathelement location="${target}/test"/>
-            </classpath>
-            <test name="CheckerTest" haltonfailure="no" outfile="${target}/test-result">
-                <formatter type="xml"/>
-            </test>
+            <classpath refid="test.classpath"/>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${target}">
+                <fileset dir="${test}">
+                    <include name="*Test.java"/>
+                </fileset>
+            </batchtest>
         </junit>
     </target>
 
