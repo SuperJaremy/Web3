@@ -10,6 +10,7 @@
     <path id="test.classpath">
         <path refid="lib.classpath"/>
         <pathelement location="${classes}"/>
+        <pathelement location="${target}/test"/>
     </path>
 
     <target name="resolve">
@@ -17,6 +18,7 @@
     </target>
 
     <target name="compile" depends="resolve" description="compile java files">
+        <mkdir dir="${build}"/>
         <mkdir dir="${classes}"/>
         <javac includeantruntime="false" destdir="${classes}" source="8">
             <src path="${main}"/>
@@ -52,11 +54,7 @@
         </javac>
 
         <junit haltonfailure="yes" printsummary="yes">
-            <classpath>
-                <pathelement path="${classes}"/>
-                <path refid="lib.classpath"/>
-                <pathelement location="${target}/test"/>
-            </classpath>
+            <classpath refid="test.classpath"/>
             <test name="CheckerTest"/>
 
 <!--            <test name="CheckerTest" haltonfailure="no" outfile="${target}/test-result">-->
@@ -88,7 +86,25 @@
 
     </target>
 
-    <target name="team" depends="build">
-
+    <target name="team">
+        <mkdir dir="temp"/>
+        <mkdir dir="temp/one"/>
+        <mkdir dir="temp/one/target"/>
+        <mkdir dir="temp/two"/>
+        <mkdir dir="temp/three"/>
+        <exec command="svn" dir="${basedir}/temp/one">
+            <arg value="co"/>
+            <arg value="-r${svn.revision.three}"/>
+            <arg value="${svn.path}"/>
+        </exec>
+        <antcall target="build">
+            <param name="target" value="temp/one/target"/>
+            <param name="src" value="temp/one/trunk"/>
+        </antcall>
+        <move todir=""
+        <zip destfile="team.zip">
+            <zipfileset includesfile="temp/one/target/Web3.war"/>
+        </zip>
+        <delete dir="temp"/>
     </target>
 </project>
