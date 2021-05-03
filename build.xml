@@ -1,96 +1,6 @@
-<!--<project xmlns:ivy="antlib:org.apache.ivy.ant" name="Web3" default="build">-->
-<!--    <property file="build.properties"/>-->
-
-<!--    <path id="application" location="${target}/Web3.war"/>-->
-
-<!--    <path id="lib.classpath">-->
-<!--        <fileset dir="${lib}">-->
-<!--            <include name="**/*.jar"/>-->
-<!--        </fileset>-->
-<!--    </path>-->
-
-<!--    <path id="test.classpath">-->
-<!--        <path refid="lib.classpath"/>-->
-<!--        <pathelement location="${classes}"/>-->
-<!--    </path>-->
-
-<!--    <target name="resolve">-->
-<!--        <ivy:retrieve/>-->
-<!--    </target>-->
-
-<!--    <target name="compile" depends="resolve" description="compile java files">-->
-<!--        <mkdir dir="${classes}"/>-->
-<!--        <javac includeantruntime="false" destdir="${classes}" source="8">-->
-<!--            <src path="${main}"/>-->
-<!--            <classpath refid="lib.classpath"/>-->
-<!--        </javac>-->
-<!--    </target>-->
-
-<!--    <target name="build" depends="compile" description="create jar file">-->
-<!--        <war destfile="${target}/Web3.war" webxml="${web_xml}">-->
-<!--            <classes dir="${classes}"/>-->
-<!--            <lib dir="${lib}"/>-->
-<!--            <fileset dir="${main}/webapp/"/>-->
-<!--            <manifest>-->
-<!--                <attribute name="Manifest-Version" value="1.0"/>-->
-<!--            </manifest>-->
-<!--        </war>-->
-<!--        <manifest file="MANIFEST.MF">-->
-<!--            <attribute name="Manifest-Version" value="1.0"/>-->
-<!--        </manifest>-->
-<!--    </target>-->
-
-<!--    <target name="clean" description="delete compiled project classes and all temporary files">-->
-<!--        <delete dir="${target}"/>-->
-<!--        <delete file="MANIFEST.MF"/>-->
-<!--    </target>-->
-
-<!--    <target name="test" depends="build">-->
-<!--        <junit printsummary="yes" haltonfailure="no" fork="true">-->
-<!--            <classpath>-->
-<!--                <pathelement location="lib/junit-4.12.jar"/>-->
-<!--                <pathelement location="${classes}"/>-->
-<!--            </classpath>-->
-<!--            <formatter type="plain"/>-->
-<!--            <batchtest todir="target">-->
-<!--                <fileset dir="${unittest.dir}"/>-->
-<!--            </batchtest>-->
-
-<!--        </junit>-->
-
-<!--    </target>-->
-
-
-<!--    <target name="doc" depends="build">-->
-<!--        <checksum algorithm="SHA-1" file="${target}/Web3.war" property="sha-1"/>-->
-<!--        <checksum algorithm="MD5" file="${target}/Web3.war" property="md5"/>-->
-
-<!--        <manifest mode="update" file="MANIFEST.MF">-->
-<!--            <attribute name="sha-1-checksum" value="${sha-1}"/>-->
-<!--            <attribute name="md5-checksum" value="${sha-1}"/>-->
-<!--        </manifest>-->
-
-<!--        <javadoc destdir="${doc}">-->
-<!--            <fileset dir="${java_code}"/>-->
-<!--            <classpath refid="lib.classpath"/>-->
-<!--        </javadoc>-->
-
-<!--        <war destfile="${target}/Web3_with_javadoc.war" webxml="${web_xml}">-->
-<!--            <classes dir="${classes}"/>-->
-<!--            <lib dir="${lib}"/>-->
-<!--            <fileset dir="${main}/webapp/"/>-->
-<!--            <fileset dir="${doc}"/>-->
-<!--        </war>-->
-
-<!--    </target>-->
-
-<!--    <target name="team" depends="build">-->
-
-<!--    </target>-->
-<!--</project>-->
-
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Web3" default="build">
     <property file="build.properties"/>
+
     <path id="lib.classpath">
         <fileset dir="${lib}">
             <include name="**/*.jar"/>
@@ -110,105 +20,70 @@
     <target name="compile" depends="resolve" description="compile java files">
         <mkdir dir="${build}"/>
         <mkdir dir="${classes}"/>
-        <javac destdir="${classes}" includeantruntime="false">
+        <javac includeantruntime="false" destdir="${classes}" source="8">
             <src path="${main}"/>
-            <exclude name="*/package-info.java"/>
-            <classpath refid="build-path"/>
+            <classpath refid="lib.classpath"/>
         </javac>
-
-        <path id="test-path">
-            <path refid="build-path"/>
-            <pathelement location="${classes}"/>
-        </path>
-
-        <mkdir dir="${tests}"/>
-        <javac destdir="${tests}" includeantruntime="false">
-            <src path="${test}"/>
-            <classpath refid="test-path"/>
-        </javac>
-        <echo>End Compile</echo>
     </target>
 
-    <!--    Сборка проекта-->
-    <target name="build" depends="compile">
-        <echo>Build</echo>
-        <mkdir dir="${out}"/>
-        <war destfile="${out}/${ant.project.name}.war" webxml="${main}/webapp/WEB-INF/web.xml">
+    <target name="build" depends="compile" description="create jar file">
+        <war destfile="${target}/Web3.war" webxml="${web_xml}">
             <classes dir="${classes}"/>
             <lib dir="${lib}"/>
             <fileset dir="${main}/webapp/"/>
             <manifest>
-                <attribute name="Created-By" value="Web"/>
                 <attribute name="Manifest-Version" value="1.0"/>
-                <attribute name="Main-Class" value="NoClass"/>
             </manifest>
         </war>
-        <echo>End Build</echo>
+        <manifest file="MANIFEST.MF">
+            <attribute name="Manifest-Version" value="1.0"/>
+        </manifest>
     </target>
 
-    <!--    Удаление временных и скомпилированных файлов-->
-    <target name="clean">
-        <echo>Clean</echo>
-        <delete dir="${build}"/>
-        <delete dir="${tests}"/>
-        <delete dir="${report}"/>
-        <echo>End Clean</echo>
+    <target name="clean" description="delete compiled project classes and all temporary files">
+        <delete dir="${target}"/>
+        <delete dir="${lib}"/>
+        <delete file="MANIFEST.MF"/>
     </target>
 
-    <!--    Запуск тестов-->
     <target name="test" depends="build">
-        <echo>Start Testing</echo>
+        <mkdir dir="${target}/test"/>
+        <javac includeantruntime="false" destdir="${target}/test" source="8">
+            <src path="${src}/test/java"/>
+            <classpath refid="test.classpath"/>
+        </javac>
+
         <junit haltonfailure="yes" printsummary="yes">
             <classpath refid="test.classpath"/>
             <test name="CheckerTest"/>
 
-<!--            <test name="CheckerTest" haltonfailure="no" outfile="${target}/test-result">-->
-<!--                <formatter type="xml"/>-->
-<!--            </test>-->
+            <!--            <test name="CheckerTest" haltonfailure="no" outfile="${target}/test-result">-->
+            <!--                <formatter type="xml"/>-->
+            <!--            </test>-->
         </junit>
-        <junitreport todir=".">
-            <fileset dir=".">
-                <include name="TEST-*.xml" />
-            </fileset>
-            <report todir="." />
-        </junitreport>
-        <echo>Continue Testing</echo>
     </target>
 
-    <!--    Репорт в случае успешного завершения тестов-->
-    <target name="report" depends="build">
-        <mkdir dir="${report}"/>
-        <echo>Start Testing</echo>
-        <junit haltonfailure="yes" printsummary="yes">
-            <classpath>
-                <pathelement path="${classes}"/>
-                <path refid="build-path"/>
-                <pathelement location="${tests}"/>
-            </classpath>
-            <formatter type="xml"/>
-            <test name="DataTest" todir="${report}"/>
-        </junit>
-        <echo>Start report</echo>
-        <junitreport todir="${report}">
-            <fileset dir="${report}">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <report format="noframes" todir="${report}"/>
-        </junitreport>
-        <echo>End report</echo>
-        <delete file="${dt}"/>
-        <delete file="${jf}"/>
-        <echo>Git add</echo>
-        <exec executable="git">
-            <arg value="add"/>
-            <arg value="${report}/*"/>
-        </exec>
-        <echo>Git commit</echo>
-        <exec executable="git">
-            <arg value="commit"/>
-            <arg value="-m"/>
-            <arg value="Haskell"/>
-        </exec>
+    <target name="doc" depends="build">
+        <checksum algorithm="SHA-1" file="${target}/Web3.war" property="sha-1"/>
+        <checksum algorithm="MD5" file="${target}/Web3.war" property="md5"/>
+
+        <manifest mode="update" file="MANIFEST.MF">
+            <attribute name="sha-1-checksum" value="${sha-1}"/>
+            <attribute name="md5-checksum" value="${sha-1}"/>
+        </manifest>
+
+        <javadoc destdir="${doc}">
+            <fileset dir="${java_code}"/>
+            <classpath refid="lib.classpath"/>
+        </javadoc>
+
+        <war destfile="${target}/Web3_with_javadoc.war" webxml="${web_xml}">
+            <classes dir="${classes}"/>
+            <lib dir="${lib}"/>
+            <fileset dir="${main}/webapp/"/>
+            <fileset dir="${doc}"/>
+        </war>
+
     </target>
 
     <target name="team">
