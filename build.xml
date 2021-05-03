@@ -91,19 +91,24 @@
 
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Web3" default="build">
     <property file="build.properties"/>
+    <path id="lib.classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
 
-    <!--    Ivy depends-->
+    <path id="test.classpath">
+        <path refid="lib.classpath"/>
+        <pathelement location="${classes}"/>
+        <pathelement location="${target}/test"/>
+    </path>
+
     <target name="resolve">
         <ivy:retrieve/>
     </target>
 
-    <path id="build-path">
-        <fileset dir="${lib}" includes="*.jar"/>
-    </path>
-
-    <!--    Компиляция исходных файлов-->
-    <target name="compile" depends="resolve">
-        <echo>Compile</echo>
+    <target name="compile" depends="resolve" description="compile java files">
+        <mkdir dir="${build}"/>
         <mkdir dir="${classes}"/>
         <javac destdir="${classes}" includeantruntime="false">
             <src path="${main}"/>
@@ -154,14 +159,12 @@
     <target name="test" depends="build">
         <echo>Start Testing</echo>
         <junit haltonfailure="yes" printsummary="yes">
-            <classpath>
-                <pathelement path="${classes}"/>
-                <path refid="build-path"/>
-                <pathelement location="${tests}"/>
-            </classpath>
-            <batchtest fork="yes">
-                <fileset dir="${src}" includes="test/java/*.java"/>
-            </batchtest>
+            <classpath refid="test.classpath"/>
+            <test name="CheckerTest"/>
+
+<!--            <test name="CheckerTest" haltonfailure="no" outfile="${target}/test-result">-->
+<!--                <formatter type="xml"/>-->
+<!--            </test>-->
         </junit>
         <junitreport todir=".">
             <fileset dir=".">
@@ -208,4 +211,25 @@
         </exec>
     </target>
 
+    <target name="team">
+        <mkdir dir="temp"/>
+        <mkdir dir="temp/one"/>
+        <mkdir dir="temp/one/target"/>
+        <mkdir dir="temp/two"/>
+        <mkdir dir="temp/three"/>
+        <exec command="svn" dir="${basedir}/temp/one">
+            <arg value="co"/>
+            <arg value="-r${svn.revision.three}"/>
+            <arg value="${svn.path}"/>
+        </exec>
+        <antcall target="build">
+            <param name="target" value="temp/one/target"/>
+            <param name="src" value="temp/one/trunk"/>
+        </antcall>
+        <move todir=""
+        <zip destfile="team.zip">
+            <zipfileset includesfile="temp/one/target/Web3.war"/>
+        </zip>
+        <delete dir="temp"/>
+    </target>
 </project>
