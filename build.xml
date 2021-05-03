@@ -42,8 +42,11 @@
 
     <target name="clean" description="delete compiled project classes and all temporary files">
         <delete dir="${target}"/>
-        <delete dir="${lib}"/>
+        <echo>Delete target dir</echo>
+        <delete file="${build}"/>
+        <echo>Delete build dir</echo>
         <delete file="MANIFEST.MF"/>
+        <echo>Delete MANIFEST.MF</echo>
     </target>
 
     <target name="test" depends="build">
