@@ -76,7 +76,7 @@
         </manifest>
 
         <javadoc destdir="${doc}">
-            <fileset dir="${java_code}"/>
+            <fileset dir="${main}"/>
             <classpath refid="lib.classpath"/>
         </javadoc>
 
