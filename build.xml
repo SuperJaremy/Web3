@@ -101,7 +101,7 @@
             <param name="target" value="temp/one/target"/>
             <param name="src" value="temp/one/trunk"/>
         </antcall>
-        <move todir=""
+        <move todir=""/>
         <zip destfile="team.zip">
             <zipfileset includesfile="temp/one/target/Web3.war"/>
         </zip>

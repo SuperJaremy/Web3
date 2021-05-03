@@ -2,3 +2,10 @@
 /target/
 /src/main/webapp/faces-config.xml
 /lib/
+MANIFEST.MF
+*.class
+*.MF
+MANIFEST.MF
+*.MF
+${target}/Web3.war
+.idea/checkstyle-idea.xml
