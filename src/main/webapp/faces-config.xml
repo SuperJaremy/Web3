@@ -23,11 +23,11 @@
         <managed-bean-scope>none</managed-bean-scope>
         <managed-property>
             <property-name>username</property-name>
-            <value></value>
+            <value>s284358</value>
         </managed-property>
         <managed-property>
             <property-name>password</property-name>
-            <value></value>
+            <value>sco969</value>
         </managed-property>
     </managed-bean>
 </faces-config>

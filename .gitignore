@@ -1,4 +1,7 @@
 # Project exclude paths
-/target/
 /src/main/webapp/faces-config.xml
-/lib/
+/lib
+MANIFEST.MF
+target/
+.idea/
+build/

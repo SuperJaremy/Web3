@@ -1,18 +1,17 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Web3" default="build">
     <property file="build.properties"/>
 
-    <path id="build.classpath">
+    <path id="lib.classpath">
         <fileset dir="${lib}">
-            <include name="*.jar"/>
+            <include name="**/*.jar"/>
         </fileset>
     </path>
 
     <path id="test.classpath">
-        <path refid="build.classpath" />
-        <pathelement location="${build}"/>
+        <path refid="lib.classpath"/>
+        <pathelement location="${classes}"/>
         <pathelement location="${target}/test"/>
     </path>
-
 
     <target name="resolve">
         <ivy:retrieve/>
@@ -20,52 +19,95 @@
 
     <target name="compile" depends="resolve" description="compile java files">
         <mkdir dir="${build}"/>
-        <mkdir dir="${target}/test"/>
-        <javac includeantruntime="false" destdir="${build}" source="8">
-            <src path="${java_code}"/>
-            <classpath refid="build.classpath"/>
-        </javac>
-        <javac includeantruntime="false" destdir="${target}/test" source="8">
-            <src path="${src}/test/java"/>
-            <classpath refid="test.classpath"/>
+        <mkdir dir="${classes}"/>
+        <javac includeantruntime="false" destdir="${classes}" source="8">
+            <src path="${main}"/>
+            <classpath refid="lib.classpath"/>
         </javac>
     </target>
 
     <target name="build" depends="compile" description="create jar file">
-        <war destfile="${target}/${name}.war" webxml="${web_xml}">
-            <classes dir="${build}"/>
+        <war destfile="${target}/Web3.war" webxml="${web_xml}">
+            <classes dir="${classes}"/>
             <lib dir="${lib}"/>
             <fileset dir="${main}/webapp/"/>
             <manifest>
-                <attribute name="Created-By" value="Web"/>
                 <attribute name="Manifest-Version" value="1.0"/>
-                <attribute name="Main-Class" value="NoClass"/>
             </manifest>
         </war>
+        <manifest file="MANIFEST.MF">
+            <attribute name="Manifest-Version" value="1.0"/>
+        </manifest>
     </target>
 
     <target name="clean" description="delete compiled project classes and all temporary files">
         <delete dir="${target}"/>
-        <delete dir="${lib}"/>
+        <echo>Delete target dir</echo>
+        <delete file="${build}"/>
+        <echo>Delete build dir</echo>
+        <delete file="MANIFEST.MF"/>
+        <echo>Delete MANIFEST.MF</echo>
     </target>
 
     <target name="test" depends="build">
+        <mkdir dir="${target}/test"/>
+        <javac includeantruntime="false" destdir="${target}/test" source="8">
+            <src path="${src}/test/java"/>
+            <classpath refid="test.classpath"/>
+        </javac>
+
         <junit haltonfailure="yes" printsummary="yes">
             <classpath refid="test.classpath"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${target}">
-                <fileset dir="${test}">
-                    <include name="*Test.java"/>
-                </fileset>
-            </batchtest>
+            <test name="CheckerTest"/>
+
+            <!--            <test name="CheckerTest" haltonfailure="no" outfile="${target}/test-result">-->
+            <!--                <formatter type="xml"/>-->
+            <!--            </test>-->
         </junit>
     </target>
 
-    <target name="doc">
+    <target name="doc" depends="build">
+        <checksum algorithm="SHA-1" file="${target}/Web3.war" property="sha-1"/>
+        <checksum algorithm="MD5" file="${target}/Web3.war" property="md5"/>
+
+        <manifest mode="update" file="MANIFEST.MF">
+            <attribute name="sha-1-checksum" value="${sha-1}"/>
+            <attribute name="md5-checksum" value="${sha-1}"/>
+        </manifest>
+
+        <javadoc destdir="${doc}">
+            <fileset dir="${main}"/>
+            <classpath refid="lib.classpath"/>
+        </javadoc>
+
+        <war destfile="${target}/Web3_with_javadoc.war" webxml="${web_xml}">
+            <classes dir="${classes}"/>
+            <lib dir="${lib}"/>
+            <fileset dir="${main}/webapp/"/>
+            <fileset dir="${doc}"/>
+        </war>
 
     </target>
 
-    <target name="team" depends="build">
-
+    <target name="team">
+        <mkdir dir="temp"/>
+        <mkdir dir="temp/one"/>
+        <mkdir dir="temp/one/target"/>
+        <mkdir dir="temp/two"/>
+        <mkdir dir="temp/three"/>
+        <exec command="svn" dir="${basedir}/temp/one">
+            <arg value="co"/>
+            <arg value="-r${svn.revision.three}"/>
+            <arg value="${svn.path}"/>
+        </exec>
+        <antcall target="build">
+            <param name="target" value="temp/one/target"/>
+            <param name="src" value="temp/one/trunk"/>
+        </antcall>
+        <move todir=""/>
+        <zip destfile="team.zip">
+            <zipfileset includesfile="temp/one/target/Web3.war"/>
+        </zip>
+        <delete dir="temp"/>
     </target>
 </project>
