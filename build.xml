@@ -8,20 +8,21 @@
     </path>
 
     <path id="test.classpath">
-        <pathelement location="${lib}/junit-4.12.jar"/>
-        <pathelement location="${lib}/hamcrest-core-1.3.jar"/>
+        <pathelement location="${lib}/${junit}"/>
+        <pathelement location="${lib}/${hamcrest}"/>
         <pathelement location="${classes}"/>
         <pathelement location="${target}/test"/>
-<!--        <pathelement location="${target}/Web3.war"/>-->
     </path>
 
     <target name="resolve">
-        <ivy:retrieve/>
+        <ivy:resolve file="${ivy}"/>
+        <ivy:retrieve pattern="${lib}/[artifact]-[type]-[revision].[ext]"/>
     </target>
 
     <target name="compile" depends="resolve" description="compile java files">
         <mkdir dir="${build}"/>
         <mkdir dir="${classes}"/>
+        <mkdir dir="${target}"/>
         <javac includeantruntime="false" destdir="${classes}" source="8">
             <src path="${main}"/>
             <classpath refid="lib.classpath"/>
@@ -29,7 +30,7 @@
     </target>
 
     <target name="build" depends="compile" description="create jar file">
-        <war destfile="${target}/Web3.war" webxml="${web_xml}">
+        <war destfile="${target}/${war.name}.war" webxml="${web_xml}">
             <classes dir="${classes}"/>
             <lib dir="${lib}"/>
             <fileset dir="${main}/webapp/"/>
@@ -45,13 +46,15 @@
     <target name="clean" description="delete compiled project classes and all temporary files">
         <delete dir="${target}"/>
         <echo>Delete target dir</echo>
-        <delete file="${build}"/>
+        <delete dir="${build}"/>
         <echo>Delete build dir</echo>
         <delete file="MANIFEST.MF"/>
         <echo>Delete MANIFEST.MF</echo>
+        <delete dir="${lib}"/>
+        <echo message="lib directory deleted"/>
     </target>
 
-    <target name="test" depends="build">
+    <target name="test" depends="build" description="test Checker class">
         <mkdir dir="${target}/test"/>
         <mkdir dir="${target}/test-classes"/>
 
@@ -73,10 +76,7 @@
 
         <junit haltonfailure="yes" printsummary="yes">
             <classpath>
-                <pathelement location="${lib}/junit-4.12.jar"/>
-                <pathelement location="${lib}/hamcrest-core-1.3.jar"/>
-                <pathelement location="${target}/test"/>
-                <pathelement location="${java.code}"/>
+                <path refid="test.classpath"/>
                 <pathelement location="${test}"/>
             </classpath>
             <test  name="com.edu.Web3.CheckerTest" haltonfailure="no" fork="yes" outfile="${target}/test-result">
@@ -108,24 +108,63 @@
 
     </target>
 
-    <target name="team">
+    <target name="team" description="get last 3 commits, build them and pack in zip">
         <mkdir dir="temp"/>
+
         <mkdir dir="temp/one"/>
-        <mkdir dir="temp/one/target"/>
-        <mkdir dir="temp/two"/>
-        <mkdir dir="temp/three"/>
-        <exec command="svn" dir="${basedir}/temp/one">
-            <arg value="co"/>
-            <arg value="-r${svn.revision.three}"/>
-            <arg value="${svn.path}"/>
+        <exec command="git" dir="temp/one">
+            <arg value="clone"/>
+            <arg value="-b"/>
+            <arg value="ant"/>
+            <arg value="${repository}"/>
         </exec>
         <antcall target="build">
-            <param name="target" value="temp/one/target"/>
-            <param name="src" value="temp/one/trunk"/>
+            <param name="lib" value="${basedir}/lib"/>
+            <param name="ivy" value="${basedir}/${ivy}"/>
+            <param name="basedir" value="temp/one/${name}"/>
+            <param name="war.name" value="${war.name}_1"/>
         </antcall>
-        <move todir=""/>
-        <zip destfile="team.zip">
-            <zipfileset includesfile="temp/one/target/Web3.war"/>
+
+        <mkdir dir="temp/two"/>
+        <exec command="git" dir="temp/two">
+            <arg value="clone"/>
+            <arg value="-b"/>
+            <arg value="ant"/>
+            <arg value="${repository}"/>
+        </exec>
+        <exec executable="git" dir="temp/two/${name}">
+            <arg value="checkout"/>
+            <arg value="HEAD~1"/>
+        </exec>
+        <antcall target="build">
+            <param name="lib" value="${basedir}/lib"/>
+            <param name="ivy" value="${basedir}/${ivy}"/>
+            <param name="basedir" value="temp/two/${name}"/>
+            <param name="war.name" value="${war.name}_2"/>
+        </antcall>
+
+        <mkdir dir="temp/three"/>
+        <exec executable="git" dir="temp/three">
+            <arg value="clone"/>
+            <arg value="-b"/>
+            <arg value="ant"/>
+            <arg value="${repository}"/>
+        </exec>
+        <exec executable="git" dir="temp/three/${name}">
+            <arg value="checkout"/>
+            <arg value="HEAD~2"/>
+        </exec>
+        <antcall target="build">
+            <param name="lib" value="${basedir}/lib"/>
+            <param name="ivy" value="${basedir}/${ivy}"/>
+            <param name="basedir" value="temp/three/${name}"/>
+            <param name="war.name" value="${war.name}_3"/>
+        </antcall>
+
+        <zip  destfile="${target}/team.zip">
+            <zipfileset dir="temp/one/${name}/target"/>
+            <zipfileset dir="temp/two/${name}/target"/>
+            <zipfileset dir="temp/three/${name}/target"/>
         </zip>
         <delete dir="temp"/>
     </target>
