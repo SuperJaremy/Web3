@@ -111,8 +111,7 @@
     <target name="team" description="get last 3 commits, build them and pack in zip">
         <mkdir dir="temp"/>
 
-        <mkdir dir="temp/one"/>
-        <exec command="git" dir="temp/one">
+        <exec executable="git" dir="temp">
             <arg value="clone"/>
             <arg value="-b"/>
             <arg value="ant"/>
@@ -121,50 +120,34 @@
         <antcall target="build">
             <param name="lib" value="${basedir}/lib"/>
             <param name="ivy" value="${basedir}/${ivy}"/>
-            <param name="basedir" value="temp/one/${name}"/>
+            <param name="basedir" value="temp/${name}"/>
             <param name="war.name" value="${war.name}_1"/>
         </antcall>
 
-        <mkdir dir="temp/two"/>
-        <exec command="git" dir="temp/two">
-            <arg value="clone"/>
-            <arg value="-b"/>
-            <arg value="ant"/>
-            <arg value="${repository}"/>
-        </exec>
-        <exec executable="git" dir="temp/two/${name}">
+        <exec executable="git" dir="temp/${name}">
             <arg value="checkout"/>
             <arg value="HEAD~1"/>
         </exec>
         <antcall target="build">
             <param name="lib" value="${basedir}/lib"/>
             <param name="ivy" value="${basedir}/${ivy}"/>
-            <param name="basedir" value="temp/two/${name}"/>
+            <param name="basedir" value="temp/${name}"/>
             <param name="war.name" value="${war.name}_2"/>
         </antcall>
 
-        <mkdir dir="temp/three"/>
-        <exec executable="git" dir="temp/three">
-            <arg value="clone"/>
-            <arg value="-b"/>
-            <arg value="ant"/>
-            <arg value="${repository}"/>
-        </exec>
-        <exec executable="git" dir="temp/three/${name}">
+        <exec executable="git" dir="temp/${name}">
             <arg value="checkout"/>
-            <arg value="HEAD~2"/>
+            <arg value="HEAD~1"/>
         </exec>
         <antcall target="build">
             <param name="lib" value="${basedir}/lib"/>
             <param name="ivy" value="${basedir}/${ivy}"/>
-            <param name="basedir" value="temp/three/${name}"/>
+            <param name="basedir" value="temp/${name}"/>
             <param name="war.name" value="${war.name}_3"/>
         </antcall>
 
         <zip  destfile="${target}/team.zip">
-            <zipfileset dir="temp/one/${name}/target"/>
-            <zipfileset dir="temp/two/${name}/target"/>
-            <zipfileset dir="temp/three/${name}/target"/>
+            <zipfileset dir="temp/${name}/target"/>
         </zip>
         <delete dir="temp"/>
     </target>
